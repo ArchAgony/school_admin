@@ -7,16 +7,19 @@ use Illuminate\Http\Request;
 
 class CityController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         // mencari seluruh data
         $data  = City::all();
+
         // menampilkan data yang sebelumnya dicari
         return response()->json([
             'data' => $data
         ]);
     }
 
-    public function show(string $id){
+    public function show(string $id)
+    {
         // mencari data berdasarkan id
         $data = City::where('id', $id)->first();
         // menampilkan data berdasarkan id yang dicari sebelumnya
@@ -25,14 +28,15 @@ class CityController extends Controller
         ]);
     }
 
-    public function create(Request $request){
+    public function create(Request $request)
+    {
         // membuat validasi yang bertujuan untuk mengecek kondisi kota
         // jika menu kota tidak diisi, maka error bawaan laravel akan berjalan
         $request->validate([
             'name' => 'required|unique:cities,name'
         ], [
             // jika kota sudah ada, maka kode ini akan berjalan
-            'name.unique' => 'kota with name '.$request->name.' already exist'
+            'name.unique' => 'kota with name ' . $request->name . ' already exist'
         ]);
 
         // membuat data berdasarkan fillable di model
@@ -45,18 +49,26 @@ class CityController extends Controller
         ]);
     }
 
-    public function update(Request $request, string $id){
+    public function update(Request $request, string $id)
+    {
         // membuat validasi yang bertujuan untuk mengecek kondisi kota
         // jika menu kota tidak diisi, maka error bawaan laravel akan berjalan
         $request->validate([
             'name' => 'required|unique:cities,name'
         ], [
             // jika kota sudah ada, maka kode ini akan berjalan
-            'name.unique' => 'kota with name '.$request->name.' already exist'
+            'name.unique' => 'kota with name ' . $request->name . ' already exist'
         ]);
 
         // mencari data berdasarkan id
         $data = City::where('id', $id)->first();
+
+        // jika kota yang dipilih tidak ada, maka kode ini akan berjalan
+        if (!$data) {
+            return response()->json([
+                'message' => 'kota with name '.$data.' does not exist'
+            ]);
+        }
 
         // mengubah data dari id yang dipilih
         $data->update($request->all());
@@ -68,25 +80,25 @@ class CityController extends Controller
         ]);
     }
 
-    public function destroy(Request $request, string $id){
-        // membuat validasi yang bertujuan untuk mengecek kondisi kota
-        // jika menu kota tidak diisi, maka error bawaan laravel akan berjalan
-        $request->validate([
-            'name'=>'required|unique:cities,name'
-        ], [
-            // jika kota sudah ada, maka kode ini akan berjalan
-            'name.unique' => 'kota with name '.$request->name.' was not exist'
-        ]);
+    public function destroy(Request $request, string $id)
+    {
+        //
+        // Mencari data berdasarkan ID
+        $data = City::find($id);
 
-        // mencari data berdasarkan id
-        $data = City::where('id', $id)->first();
+        // Jika data tidak ditemukan
+        if (!$data) {
+            return response()->json([
+                'message' => 'City with ID ' . $id . ' does not exist.'
+            ], 404);
+        }
 
-        // menghapus data dari id yang dipilih
-        $data->delete($request->all());
+        // Menghapus data
+        $data->delete();
 
-        // membuat pesan jika data berhasil dihapus
+        // Mengembalikan pesan jika data berhasil dihapus
         return response()->json([
-            'message' => 'berhasil dihapus',
+            'message' => 'City successfully deleted.',
             'data' => $data
         ]);
     }

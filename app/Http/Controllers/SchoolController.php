@@ -7,59 +7,97 @@ use Illuminate\Http\Request;
 
 class SchoolController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        // mencari seluruh data
+        $data = School::all();
+
+        // menampilkan data yang sebelumnya dicari
+        return response()->json([
+            'data' => $data
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function show(string $id)
     {
-        //
+        // mencari data berdasarkan id
+        $data = School::where('id', $id)->first();
+
+        // menampilkan data berdasarkan id yang dicari sebelumnya
+        return response()->json([
+            'data' => $data
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function create(Request $request)
     {
-        //
+        // membuat validasi yang bertujuan untuk mengecek kondisi kota
+        // jika menu kota tidak diisi, maka error bawaan laravel akan berjalan
+        $request->validate([
+            'name' => 'required|unique:schools,name',
+            // validasi untuk mengecek adanya id pada table city
+            'city_id' => 'required|exists:cities,id'
+        ], [
+            // jika kota sudah ada, maka kode ini akan berjalan
+            'name.unique' => 'school with name ' . $request->name . ' already exist'
+        ]);
+
+        // membuat data berdasarkan fillable di model
+        $data = School::create($request->all());
+
+        // membuat pesan jika kota berhasil ditambah
+        if ($data) {
+            return response()->json([
+                'message' => 'school created successfully',
+                'data' => $data
+            ]);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(School $school)
+    public function update(Request $request, string $id)
     {
-        //
+        // membuat validasi yang bertujuan untuk mengecek kondisi kota
+        // jika menu kota tidak diisi, maka error bawaan laravel akan berjalan
+        $request->validate([
+            'name' => 'required|unique:schools,id',
+            // validasi untuk mengecek adanya id pada table city
+            'city_id' => 'required|exists:cities,id'
+        ]);
+
+        // mencari data berdasarkan id
+        $data = School::where('id', $id)->first();
+
+        // jika kota yang dipilih tidak ada, maka kode ini akan berjalan
+        if (!$data) {
+            return response()->json([
+                'message' => 'kota with name ' . $data . ' does not exist'
+            ]);
+        }
+
+        // mengubah data dari id yang dipilih
+        $data->update($request->all());
+
+        // membuat pesan jika data berhasil diubah
+        return response()->json([
+            'data' => $data
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(School $school)
+    public function destroy(string $id)
     {
-        //
-    }
+        $data = School::find($id);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, School $school)
-    {
-        //
-    }
+        if (!$data) {
+            return response()->json([
+                'message' => 'school with id '.$id.' does not exist'
+            ]);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(School $school)
-    {
-        //
+        $data->delete();
+
+        return response()->json([
+            'message' => 'school successfully deleted',
+            'data' => $data
+        ]);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CityController;
+use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,4 +22,12 @@ Route::prefix('/city')->group(function(){
     Route::post('', [CityController::class, 'create']);
     Route::put('/{id}', [CityController::class, 'update']);
     Route::delete('/{id}', [CityController::class, 'destroy']);
+});
+
+Route::prefix('/school')->group(function(){
+    Route::get('', [SchoolController::class, 'index']);
+    Route::get('/{id}', [SchoolController::class, 'show']);
+    Route::post('', [SchoolController::class, 'create']);
+    Route::put('/{id}', [SchoolController::class, 'update']);
+    Route::delete('/{id}', [SchoolController::class, 'destroy']);
 });
