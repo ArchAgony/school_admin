@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('schools', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('city_id');
+            $table->foreignId('city_id')->references('id')->on('cities');
             $table->timestamps();
         });
     }

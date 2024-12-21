@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\SchoolController;
+use App\Http\Controllers\StudentClassController;
 use App\Http\Controllers\UserController;
+use App\Models\StudentClass;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,3 +33,12 @@ Route::prefix('/school')->group(function(){
     Route::put('/{id}', [SchoolController::class, 'update']);
     Route::delete('/{id}', [SchoolController::class, 'destroy']);
 });
+
+Route::prefix('/student-class')->group(function(){
+    Route::get('', [StudentClassController::class, 'index']);
+    Route::get('/{id}', [StudentClassController::class, 'show']);
+    Route::post('', [StudentClassController::class, 'create']);
+    Route::put('/{id}', [StudentClassController::class, 'update']);
+    Route::delete('/{id}', [StudentClassController::class, 'destroy']);
+});
+
